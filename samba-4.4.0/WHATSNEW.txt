@@ -1,0 +1,457 @@
+Release Announcements
+=====================
+
+This is the first stable release of the Samba 4.4 release series.
+
+
+UPGRADING
+=========
+
+Nothing special.
+
+
+NEW FEATURES/CHANGES
+====================
+
+Asynchronous flush requests
+---------------------------
+
+Flush requests from SMB2/3 clients are handled asynchronously and do
+not block the processing of other requests. Note that 'strict sync'
+has to be set to 'yes' for Samba to honor flush requests from SMB
+clients.
+
+s3: smbd
+--------
+
+Remove '--with-aio-support' configure option. We no longer would ever prefer
+POSIX-RT aio, use pthread_aio instead.
+
+samba-tool sites
+----------------
+
+The 'samba-tool sites' subcommand can now be run against another server by
+specifying an LDB URL using the '-H' option and not against the local database
+only (which is still the default when no URL is given).
+
+samba-tool domain demote
+------------------------
+
+Add '--remove-other-dead-server' option to 'samba-tool domain demote'
+subcommand. The new version of this tool now can remove another DC that is
+itself offline.  The '--remove-other-dead-server' removes as many references
+to the DC as possible.
+
+samba-tool drs clone-dc-database
+--------------------------------
+
+Replicate an initial clone of domain, but do not join it.
+This is developed for debugging purposes, but not for setting up another DC.
+
+pdbedit
+-------
+
+Add '--set-nt-hash' option to pdbedit to update user password from nt-hash
+hexstring. 'pdbedit -vw' shows also password hashes.
+
+smbstatus
+---------
+
+'smbstatus' was enhanced to show the state of signing and encryption for
+sessions and shares.
+
+smbget
+------
+The -u and -p options for user and password were replaced by the -U option that
+accepts username[%password] as in many other tools of the Samba suite.
+Similary, smbgetrc files do not accept username and password options any more,
+only a single "user" option which also accepts user%password combinations.
+The -P option was removed.
+
+s4-rpc_server
+-------------
+
+Add a GnuTLS based backupkey implementation.
+
+ntlm_auth
+---------
+
+Using the '--offline-logon' enables ntlm_auth to use cached passwords when the
+DC is offline.
+
+Allow '--password' force a local password check for ntlm-server-1 mode.
+
+vfs_offline
+-----------
+
+A new VFS module called vfs_offline has been added to mark all files in the
+share as offline. It can be useful for shares mounted on top of a remote file
+system (either through a samba VFS module or via FUSE).
+
+KCC
+---
+
+The Samba KCC has been improved, but is still disabled by default.
+
+DNS
+---
+
+There were several improvements concerning the Samba DNS server.
+
+Active Directory
+----------------
+
+There were some improvements in the Active Directory area.
+
+WINS nsswitch module
+--------------------
+
+The WINS nsswitch module has been rewritten to address memory issues and to
+simplify the code. The module now uses libwbclient to do WINS queries. This
+means that winbind needs to be running in order to resolve WINS names using
+the nss_wins module. This does not affect smbd.
+
+CTDB changes
+------------
+
+* CTDB now uses a newly implemented parallel database recovery scheme
+  that avoids deadlocks with smbd.
+
+  In certain circumstances CTDB and smbd could deadlock.  The new
+  recovery implementation avoid this.  It also provides improved
+  recovery performance.
+
+* All files are now installed into and referred to by the paths
+  configured at build time.  Therefore, CTDB will now work properly
+  when installed into the default location at /usr/local.
+
+* Public CTDB header files are no longer installed, since Samba and
+  CTDB are built from within the same source tree.
+
+* CTDB_DBDIR can now be set to tmpfs[:<tmpfs-options>]
+
+  This will cause volatile TDBs to be located in a tmpfs.  This can
+  help to avoid performance problems associated with contention on the
+  disk where volatile TDBs are usually stored.  See ctdbd.conf(5) for
+  more details.
+
+* Configuration variable CTDB_NATGW_SLAVE_ONLY is no longer used.
+  Instead, nodes should be annotated with the "slave-only" option in
+  the CTDB NAT gateway nodes file.  This file must be consistent
+  across nodes in a NAT gateway group.  See ctdbd.conf(5) for more
+  details.
+
+* New event script 05.system allows various system resources to be
+  monitored
+
+  This can be helpful for explaining poor performance or unexpected
+  behaviour.  New configuration variables are
+  CTDB_MONITOR_FILESYSTEM_USAGE, CTDB_MONITOR_MEMORY_USAGE and
+  CTDB_MONITOR_SWAP_USAGE.  Default values cause warnings to be
+  logged.  See the SYSTEM RESOURCE MONITORING CONFIGURATION in
+  ctdbd.conf(5) for more information.
+
+  The memory, swap and filesystem usage monitoring previously found in
+  00.ctdb and 40.fs_use is no longer available.  Therefore,
+  configuration variables CTDB_CHECK_FS_USE, CTDB_MONITOR_FREE_MEMORY,
+  CTDB_MONITOR_FREE_MEMORY_WARN and CTDB_CHECK_SWAP_IS_NOT_USED are
+  now ignored.
+
+* The 62.cnfs eventscript has been removed.  To get a similar effect
+  just do something like this:
+
+      mmaddcallback ctdb-disable-on-quorumLoss \
+        --command /usr/bin/ctdb \
+        --event quorumLoss --parms "disable"
+
+      mmaddcallback ctdb-enable-on-quorumReached \
+        --command /usr/bin/ctdb \
+        --event quorumReached --parms "enable"
+
+* The CTDB tunable parameter EventScriptTimeoutCount has been renamed
+  to MonitorTimeoutCount
+
+  It has only ever been used to limit timed-out monitor events.
+
+  Configurations containing CTDB_SET_EventScriptTimeoutCount=<n> will
+  cause CTDB to fail at startup.  Useful messages will be logged.
+
+* The commandline option "-n all" to CTDB tool has been removed.
+
+  The option was not uniformly implemented for all the commands.
+  Instead of command "ctdb ip -n all", use "ctdb ip all".
+
+* All CTDB current manual pages are now correctly installed
+
+
+EXPERIMENTAL FEATURES
+=====================
+
+SMB3 Multi-Channel
+------------------
+
+Samba 4.4.0 adds *experimental* support for SMB3 Multi-Channel.
+Multi-Channel is an SMB3 protocol feature that allows the client
+to bind multiple transport connections into one authenticated
+SMB session. This allows for increased fault tolerance and
+throughput. The client chooses transport connections as reported
+by the server and also chooses over which of the bound transport
+connections to send traffic. I/O operations for a given file
+handle can span multiple network connections this way.
+An SMB multi-channel session will be valid as long as at least
+one of its channels are up.
+
+In Samba, multi-channel can be enabled by setting the new
+smb.conf option "server multi channel support" to "yes".
+It is disabled by default.
+
+Samba has to report interface speeds and some capabilities to
+the client. On Linux, Samba can auto-detect the speed of an
+interface. But to support other platforms, and in order to be
+able to manually override the detected values, the "interfaces"
+smb.conf option has been given an extended syntax, by which an
+interface specification can additionally carry speed and
+capability information. The extended syntax looks like this
+for setting the speed to 1 gigabit per second:
+
+    interfaces = 192.168.1.42;speed=1000000000
+
+This extension should be used with care and are mainly intended
+for testing. See the smb.conf manual page for details.
+
+CAVEAT: While this should be working without problems mostly,
+there are still corner cases in the treatment of channel failures
+that may result in DATA CORRUPTION when these race conditions hit.
+It is hence
+
+    NOT RECOMMENDED TO USE MULTI-CHANNEL IN PRODUCTION
+
+at this stage. This situation can be expected to improve during
+the life-time of the 4.4 release. Feed-back from test-setups is
+highly welcome.
+
+
+REMOVED FEATURES
+================
+
+Public headers
+--------------
+
+Several public headers are not installed any longer. They are made for internal
+use only. More public headers will very likely be removed in future releases.
+
+The following headers are not installed any longer:
+dlinklist.h, gen_ndr/epmapper.h, gen_ndr/mgmt.h, gen_ndr/ndr_atsvc_c.h,
+gen_ndr/ndr_epmapper_c.h, gen_ndr/ndr_epmapper.h, gen_ndr/ndr_mgmt_c.h,
+gen_ndr/ndr_mgmt.h,gensec.h, ldap_errors.h, ldap_message.h, ldap_ndr.h,
+ldap-util.h, pytalloc.h, read_smb.h, registry.h, roles.h, samba_util.h,
+smb2_constants.h, smb2_create_blob.h, smb2.h, smb2_lease.h, smb2_signing.h,
+smb_cli.h, smb_cliraw.h, smb_common.h, smb_composite.h, smb_constants.h,
+smb_raw.h, smb_raw_interfaces.h, smb_raw_signing.h, smb_raw_trans2.h,
+smb_request.h, smb_seal.h, smb_signing.h, smb_unix_ext.h, smb_util.h,
+torture.h, tstream_smbXcli_np.h.
+
+vfs_smb_traffic_analyzer
+------------------------
+
+The SMB traffic analyzer VFS module has been removed, because it is not
+maintained any longer and not widely used.
+
+vfs_scannedonly
+---------------
+
+The scannedonly VFS module has been removed, because it is not maintained
+any longer.
+
+smb.conf changes
+----------------
+
+  Parameter Name		Description		Default
+  --------------		-----------		-------
+  aio max threads               New                     100
+  ldap page size		Changed default		1000
+  server multi channel support	New			No
+  interfaces			Extended syntax
+
+
+KNOWN ISSUES
+============
+
+Currently none.
+
+
+CHANGES SINCE 4.4.0rc5
+======================
+
+o  Michael Adam <obnox@samba.org>
+   * BUG 11796: smbd: Enable multi-channel if 'server multi channel support =
+     yes' in the config.
+
+o  Günther Deschner <gd@samba.org>
+   * BUG 11802: lib/socket/interfaces: Fix some uninitialied bytes.
+
+o  Uri Simchoni <uri@samba.org>
+   * BUG 11798: build: Fix build when '--without-quota' specified.
+
+
+CHANGES SINCE 4.4.0rc4
+======================
+
+o  Andrew Bartlett <abartlet@samba.org>
+   * BUG 11780: mkdir can return ACCESS_DENIED incorrectly on create race.
+   * BUG 11783: Mismatch between local and remote attribute ids lets
+     replication fail with custom schema.
+   * BUG 11789: Talloc: Version 2.1.6.
+
+o  Ira Cooper <ira@samba.org>
+   * BUG 11774: vfs_glusterfs: Fix use after free in AIO callback.
+
+o  Günther Deschner <gd@samba.org>
+   * BUG 11755: Fix net join.
+
+o  Amitay Isaacs <amitay@gmail.com>
+   * BUG 11770: Reset TCP Connections during IP failover.
+
+o  Justin Maggard <jmaggard10@gmail.com>
+   * BUG 11773: s3:smbd: Add negprot remote arch detection for OSX.
+
+o  Stefan Metzmacher <metze@samba.org>
+   * BUG 11772: ldb: Version 1.1.26.
+   * BUG 11782: "trustdom_list_done: Got invalid trustdom response" message
+     should be avoided.
+
+o  Uri Simchoni <uri@samba.org>
+   * BUG 11769: libnet: Make Kerberos domain join site-aware.
+   * BUG 11788: Quota is not supported on Solaris 10.
+
+
+CHANGES SINCE 4.4.0rc3
+======================
+
+o  Jeremy Allison <jra@samba.org>
+   * BUG 11648: CVE-2015-7560: Getting and setting Windows ACLs on symlinks can
+     change permissions on link target.
+
+o  Christian Ambach <ambi@samba.org>
+   * BUG 11767: s3:utils/smbget: Fix option parsing.
+
+o  Alberto Maria Fiaschi <alberto.fiaschi@estar.toscana.it>
+   * BUG 8093: Access based share enum: handle permission set in configuration
+     files.
+
+o  Stefan Metzmacher <metze@samba.org>
+   * BUG 11702: s3:clispnego: Fix confusing warning in spnego_gen_krb5_wrap().
+   * BUG 11742: tevent: version 0.9.28: Fix memory leak when old signal action
+     restored.
+   * BUG 11755: s3:libads: setup the msDS-SupportedEncryptionTypes attribute on
+     ldap_add.
+   * BUGs 11128, 11686: CVE-2016-0771: Read of uninitialized memory DNS TXT
+     handling.
+
+o  Garming Sam <garming@catalyst.net.nz>
+   * BUGs 11128, 11686: CVE-2016-0771: Read of uninitialized memory DNS TXT
+     handling.
+
+o  Uri Simchoni <uri@samba.org>
+   * BUG 11691: winbindd: Return trust parameters when listing trusts.
+   * BUG 11753: smbd: Ignore SVHDX create context.
+   * BUG 11763: passdb: Add linefeed to debug message.
+
+
+CHANGES SINCE 4.4.0rc2
+======================
+
+o  Michael Adam <obnox@samba.org>
+   * BUG 11723: lib:socket: Fix CID 1350010: Integer OVERFLOW_BEFORE_WIDEN.
+   * BUG 11735: lib:socket: Fix CID 1350009: Fix illegal memory accesses
+     (BUFFER_SIZE_WARNING).
+
+o  Jeremy Allison <jra@samba.org>
+   * BUG 10489: s3: smbd: posix_acls: Fix check for setting u:g:o entry on a
+     filesystem with no ACL support.
+
+o  Christian Ambach <ambi@samba.org>
+   * BUG 11700: s3:utils/smbget: Set default blocksize.
+
+o  Anoop C S <anoopcs@redhat.com>
+   * BUG 11734: lib/socket: Fix improper use of default interface speed.
+
+o  Ralph Boehme <slow@samba.org>
+   * BUG 11714: lib/tsocket: Work around sockets not supporting FIONREAD.
+
+o  Volker Lendecke <vl@samba.org>
+   * BUG 11724: smbd: Fix CID 1351215 Improper use of negative value.
+   * BUG 11725: smbd: Fix CID 1351216 Dereference null return value.
+   * BUG 11732: param: Fix str_list_v3 to accept ; again.
+
+o  Noel Power <noel.power@suse.com>
+   * BUG 11738: libcli: Fix debug message, print sid string for new_ace trustee.
+
+o  Jose A. Rivera <jarrpa@samba.org>
+   * BUG 11727: s3:smbd:open: Skip redundant call to file_set_dosmode when
+     creating a new file.
+
+o  Andreas Schneider <asn@samba.org>
+   * BUG 11730: docs: Add manpage for cifsdd.
+   * BUG 11739: Fix installation path of Samba helper binaries.
+
+o  Berend De Schouwer <berend.de.schouwer@gmail.com>
+   * BUG 11643: docs: Add example for domain logins to smbspool man page.
+
+o  Martin Schwenke <martin@meltin.net>
+   * BUG 11719: ctdb-scripts: Drop use of "smbcontrol winbindd ip-dropped ..."
+
+o  Hemanth Thummala <hemanth.thummala@nutanix.com>
+   * BUG 11708: loadparm: Fix memory leak issue.
+   * BUG 11740: Fix memory leak in loadparm.
+
+
+CHANGES SINCE 4.4.0rc1
+======================
+
+o  Michael Adam <obnox@samba.org>
+   * BUG 11715: s3:vfs:glusterfs: Fix build after quota changes.
+
+o  Jeremy Allison <jra@samba.org>
+   * BUG 11703: s3: smbd: Fix timestamp rounding inside SMB2 create.
+
+o  Christian Ambach <ambi@samba.org>
+   * BUG 11700: Streamline 'smbget' options with the rest of the Samba utils.
+
+o  Günther Deschner <gd@samba.org>
+   * BUG 11696: ctdb: Do not provide a useless pkgconfig file for ctdb.
+
+o  Stefan Metzmacher <metze@samba.org>
+   * BUG 11699: Crypto.Cipher.ARC4 is not available on some platforms, fallback
+     to M2Crypto.RC4.RC4 then.
+
+o  Amitay Isaacs <amitay@gmail.com>
+   * BUG 11705: Sockets with htons(IPPROTO_RAW) and CVE-2015-8543.
+
+o  Andreas Schneider <asn@samba.org>
+   * BUG 11690: docs: Add smbspool_krb5_wrapper manpage.
+
+o  Uri Simchoni <uri@samba.org>
+   * BUG 11681: smbd: Show correct disk size for different quota and dfree block
+     sizes.
+
+
+#######################################
+Reporting bugs & Development Discussion
+#######################################
+
+Please discuss this release on the samba-technical mailing list or by
+joining the #samba-technical IRC channel on irc.freenode.net.
+
+If you do report problems then please try to send high quality
+feedback. If you don't provide vital information to help us track down
+the problem then you will probably be ignored.  All bug reports should
+be filed under the Samba 4.1 and newer product in the project's Bugzilla
+database (https://bugzilla.samba.org/).
+
+
+======================================================================
+== Our Code, Our Bugs, Our Responsibility.
+== The Samba Team
+======================================================================
+
