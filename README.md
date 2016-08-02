@@ -10,9 +10,9 @@
 
 ### Operating system requirements
   1. Check kernel support
-  `cat /boot/config-4.4.0-31-generic`<p>
-
   ```
+    cat /boot/config-4.4.0-31-generic
+  
     CONFIG_EXT4_FS_XATTR=y
     CONFIG_EXT4_FS_SECURITY=y
     CONFIG_EXT4_FS_POSIX_ACL=y
