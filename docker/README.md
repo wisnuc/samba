@@ -34,3 +34,12 @@
     /etc/samba/*
     /var/lib/samba/*
   ```
+  
+  ```
+    Tar (Docker Container One):
+    tar -zcf /home/backup.tar.gz /etc/passwd /etc/shadow /etc/group /etc/gshadow /etc/samba/* /var/lib/samba/*
+    
+    Untar (Docker Container Two):
+    File Path: /
+    tar -zxf /backup.tar.gz
+  ```
