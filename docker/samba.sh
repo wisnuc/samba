@@ -10,11 +10,12 @@ set -o nounset                      # Treat unset variables as an error
 # Return: user added to container
 adduser()
 {
-    local name="${1}" passwd="${2}"
+    local name="${1}"
+    local passwd="${2}"
     useradd "$name" -M
     (echo $passwd ; echo $passwd ) | smbpasswd -s -a $name
 
-    pdbedit -e smbpasswd:/etc/samba/sambausers.bak
+    pdbedit -e smbpasswd:/backup/samba/sambausers.bak
 }
 
 ### import: import a configuration file
@@ -47,8 +48,10 @@ elif [[ $# -ge 1 ]]; then
     echo "ERROR: command not found: $1"
     exit 13
 elif ps -ef | egrep -v grep | grep -q smbd; then
-    echo "Service is already running"
+    echo "Service is already running."
+elif [[ ${NMBD:-""} ]]; then
+    ionice -c 3 nmbd -D
+    exec ionice -c 3 smbd -FS </dev/null
 else
-    [[ ${NMBD:-""} ]] && ionice -c 3 nmbd -D
-    exec systemctl start smbd </dev/null
+    exit 0
 fi
