@@ -41,5 +41,6 @@
     
     Untar (Docker Container Two):
     File Path: /
+    cd /
     tar -zxf /backup.tar.gz
   ```
