@@ -19,7 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     rm -rf /var/lib/apt/lists/* /tmp/*
 COPY samba.sh /usr/bin/
 
-VOLUME ["/etc/samba"]
+VOLUME ["/etc/samba","/backup/samba"]
 
 EXPOSE 137 138 139 445
 
