@@ -24,3 +24,13 @@
     ...
     docker -H tcp://0.0.0.0:5678 exec -it d418c2258ec4 bash
   ```
+  3. Backup User List & All Configurations
+
+  ```
+    /etc/passwd (User name and account info)
+    /etc/shadow (Passwords)
+    /etc/group (Group names and membership)
+    /etc/gshadow - Contains group encrypted passwords.
+    /etc/samba/*
+    /var/lib/samba/*
+  ```
