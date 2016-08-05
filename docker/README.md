@@ -25,14 +25,14 @@
     docker -H tcp://0.0.0.0:5678 run --privileged -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -ti ubuntu
     
   3) SystemV Mode: (Run Our Samba Directly, import userList)
-    docker -H tcp://0.0.0.0:5678 run --privileged -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -ti -v /home/tmp/:/srv/samba/shareFolder -v /srv/samba/import.file:/home/import.file IMAGEID -n -i "/home/import.file"
+    docker -H tcp://0.0.0.0:5678 run -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -ti -v /home/tmp/:/srv/samba/shareFolder -v /srv/samba/import.file:/home/import.file IMAGEID -n -i "/home/import.file"
     
   4) SystemV Mode: (Run Our Samba Directly, add new user)
-    docker -H tcp://0.0.0.0:5678 run --privileged -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -ti -v /home/tmp/:/srv/samba/shareFolder -v /srv/samba/import.file:/home/import.file IMAGEID -n -u "aaaaa:123456" -u "bbbbb:654321"
+    docker -H tcp://0.0.0.0:5678 run -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -ti -v /home/tmp/:/srv/samba/shareFolder  IMAGEID -n -u "aaaaa:123456" -u "bbbbb:654321"
     ...
     docker -H tcp://0.0.0.0:5678 ps -a
     ...
-    docker -H tcp://0.0.0.0:5678 exec -it d418c2258ec4 bash
+    docker -H tcp://0.0.0.0:5678 exec -it IMAGEID bash
   ```
   
   ```
