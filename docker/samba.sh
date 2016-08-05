@@ -38,7 +38,6 @@ import()
 }
 
 mkdir -p /srv/samba/backup/
-rm -rf /srv/samba/backup/
 
 while getopts ":i:nu:" opt; do
     case "$opt" in
