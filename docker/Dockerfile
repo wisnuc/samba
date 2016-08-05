@@ -45,6 +45,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     echo "" >> /etc/samba/smb.conf && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/*
+
+# Caution samba.sh permission, chmod 777
 COPY samba.sh /usr/bin/
 
 VOLUME ["/etc/samba","/backup/samba"]
