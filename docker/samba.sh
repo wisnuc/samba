@@ -18,7 +18,7 @@ adduser()
     # pdbedit -e smbpasswd:/backup/samba/sambaUsers.bak
     # pdbedit -e tdbsam:/backup/samba/sambaUsers.bak
     # Save this user
-    echo $name $passwd > /srv/samba/sambaUsers.bak
+    echo $name $passwd > /srv/samba/backup/sambaUsers.bak
 }
 
 ### import: import a configuration file
