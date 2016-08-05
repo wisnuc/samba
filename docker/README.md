@@ -38,8 +38,8 @@
   ```
   ps:
     1. -n : run smbd daemon or it will only run once and exit
-    2. -i : import userList file (just like "/???/???"), HAVE TO use -v to point out the real file where is
-    3. -u : add a new user (just like "aaaaa:123456")
+    2. -i : import userList file (just like "/???/???"), HAVE TO use -v to point out the real file where is, just like '-v /srv/samba/import.file:/home/import.file -i "/home/import.file"'
+    3. -u : add a new user (just like "aaaaa:123456"), HAVE TO use -v to point out the real file where is, and container path is '/srv/samba/backup/'
   ```
   
   3. Backup User List & All Configurations (Not used in this project)
