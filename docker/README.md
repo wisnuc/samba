@@ -40,6 +40,7 @@
     1. -n : run smbd daemon or it will only run once and exit
     2. -i : import userList file (just like "/???/???"), HAVE TO use -v to point out the real file where is, just like '-v /srv/samba/import.file:/home/import.file -i "/home/import.file"'
     3. -u : add a new user (just like "aaaaa:123456"), HAVE TO use -v to point out the real file where is, and container path is '/srv/samba/backup/'
+    4. Can use all parameters, docker -H tcp://0.0.0.0:5678 run -p 137:137/udp -p 138:138/udp -p 139:139 -p 445:445 -ti -v /home/tmp/:/srv/samba/backup/ -v /srv/samba/import.file:/home/import.file IMAGEID -i "/home/import.file" -n -u "abc:123456" -u "efg:654321" -u "hij:987654"
   ```
   
   3. Backup User List & All Configurations (Not used in this project)
