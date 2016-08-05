@@ -41,7 +41,7 @@ while getopts ":i:nu:" opt; do
     case "$opt" in
         i) import "$OPTARG" ;;
         n) NMBD="true" ;;
-        u) eval adduser $(sed 's|;| |g' <<< $OPTARG) ;;
+        u) eval adduser $(sed 's|:| |g' <<< $OPTARG) ;;
         "?") echo "Unknown option: -$OPTARG"; usage 1 ;;
         ":") echo "No argument value for option: -$OPTARG"; usage 2 ;;
     esac
