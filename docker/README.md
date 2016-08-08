@@ -65,3 +65,25 @@
     cd /
     tar -zxf /backup.tar.gz
   ```
+
+  4. Only Backup User List with **SMBPASSWD** file
+  
+  file format:<p>
+  ```
+    ccccc:1002:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:31D6CFE0D16AE931B73C59D7E0C089C0:[U          ]:LCT-57A84C1E:
+    eeeee:1004:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:69943C5E63B4D2C104DBBCC15138B72B:[U          ]:LCT-57A84D0B:
+    ddddd:1003:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:3DBDE697D71690A769204BEB12283678:[U          ]:LCT-57A84C25:
+    bbbbb:1001:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:4057B60B514C5402DDE3D29A1845C366:[U          ]:LCT-57A84611:
+    aaaaa:1000:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:32ED87BDB5FDC5E9CBA88547376818D4:[U          ]:LCT-57A84611:
+
+  ```
+
+  method:<p>
+  ```
+    export:
+      pdbedit -Lw -u USERNAME > /???/filename (file type is not important)
+      
+    import:
+      a. Analyse smbpasswd file, pick up all username filed, use "useradd" command to add every user into system
+      b. pdbedit -i smbpasswd:/???/filename
+  ```
