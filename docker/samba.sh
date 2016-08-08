@@ -13,28 +13,31 @@ adduser()
     local name="${1}"
     local passwd="${2}"
     useradd "$name" -M
-    (echo $passwd ; echo $passwd ) | smbpasswd -s -a $name
 
-    # pdbedit -e smbpasswd:/backup/samba/sambaUsers.bak
-    # pdbedit -e tdbsam:/backup/samba/sambaUsers.bak
+    (echo $passwd ; echo $passwd ) | smbpasswd -s -a $name
+    smbpasswd -e $name
+
     # Save this user
-    echo $name $passwd >> /srv/samba/backup/sambaUsers.bak
+    pdbedit -Lw -u "$name" >> /srv/samba/backup/sambaUsers.bak
 }
 
 ### import: import a configuration file
+# just like:
+# aaaaa:1000:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:32ED87BDB5FDC5E9CBA88547376818D4:[U          ]:LCT-57A84611:
+# bbbbb:1001:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:4057B60B514C5402DDE3D29A1845C366:[U          ]:LCT-57A84611:
+
 # Arguments:
 #   file - file to import
 # Return: user(s) added to container
 import()
 {
     local name
-    local passwd
+    local id
     local file="${1}"
-    while read name passwd; do
-        useradd "$name" -M
-        (echo $passwd ; echo $passwd ) | smbpasswd -s -a $name
+    while read name id; do
+        useradd "$name" -M -u "$id"
     done < <(cut -d: -f1,2 --output-delimiter=' ' $file)
-    # pdbedit -i smbpasswd:$file
+    pdbedit -i smbpasswd:$file
 }
 
 mkdir -p /srv/samba/backup/
