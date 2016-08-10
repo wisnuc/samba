@@ -1,13 +1,13 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04.4
 
 MAINTAINER JiangWeiGitHub <wei.jiang@winsuntech.cn>
 
 # Update apt sourcelist
-RUN echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ xenial main restricted universe multiverse" > /etc/apt/sources.list \
- && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list \
- && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse" >> /etc/apt/sources.list \
- && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list \
- && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ trusty main restricted universe multiverse" > /etc/apt/sources.list \
+ && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list \
+ && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ trusty-proposed main restricted universe multiverse" >> /etc/apt/sources.list \
+ && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ trusty-security main restricted universe multiverse" >> /etc/apt/sources.list \
+ && echo "deb http://ubuntu.uestc.edu.cn/ubuntu/ trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list
 
 # update apt
 RUN apt-get update
