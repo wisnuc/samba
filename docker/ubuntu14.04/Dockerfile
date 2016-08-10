@@ -49,6 +49,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
 # Caution samba.sh permission, chmod 777
 COPY samba.sh /usr/bin/
 
+RUN chmod 755 /usr/bin/samba.sh
+
 VOLUME ["/etc/samba","/backup/samba"]
 
 EXPOSE 137 138 139 445
