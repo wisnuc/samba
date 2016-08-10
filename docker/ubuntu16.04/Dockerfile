@@ -51,6 +51,8 @@ COPY samba.sh /usr/bin/
 
 VOLUME ["/etc/samba","/backup/samba"]
 
+RUN chmod 755 /usr/bin/samba.sh
+
 EXPOSE 137 138 139 445
 
 ENTRYPOINT ["samba.sh"]
