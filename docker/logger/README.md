@@ -28,6 +28,9 @@
     - Edit /etc/rsyslog.conf
     
     ```
+      ...
+      ...
+      
       # *.* @hostname:<port>
       *.* @192.168.5.118:555
     ```
@@ -37,3 +40,14 @@
     ```
       service rsyslog restart
     ```
+
+### Usage
+  + Host Platform: Window 7 64Bit (IP: 192.168.5.118)
+  + Samba Server Platform: Ubuntu 16.04 64Bit (IP: 192.168.5.180)
+  + Software: UDP/TCP testing tool
+  + Method:
+    - Open UDP/TCP testing tool
+    - Create UDP testing
+    - Listening on port 555
+    - Visit Samba Server with 192.168.5.180
+    - Check UDP/TCP testing tool's output window
