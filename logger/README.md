@@ -38,7 +38,9 @@
     - Restart or reload rsyslogd service
     
     ```
-      service rsyslog restart
+      # service rsyslog restart // not working
+      ps -elf | grep rsyslog
+      kill -9 UID
     ```
 
 ### Usage
