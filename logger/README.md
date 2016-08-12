@@ -41,6 +41,7 @@
       # service rsyslog restart // not working
       ps -elf | grep rsyslog
       kill -9 UID
+      service rsyslog start
     ```
 
 ### Usage
