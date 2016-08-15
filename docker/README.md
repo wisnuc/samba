@@ -10,3 +10,5 @@
     
     # Port 514 is the default log port for rsyslogd
   ```
+  
+  2. If you want to run it with 'background' mode, you have to add '**-d**' in docker command line.
