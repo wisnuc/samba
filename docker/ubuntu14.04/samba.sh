@@ -61,8 +61,8 @@ elif [[ $# -ge 1 ]]; then
 elif ps -ef | egrep -v grep | grep -q smbd; then
     echo "Service is already running."
 elif [[ ${NMBD:-""} ]]; then
-    ionice -c 3 nmbd -D && ionice -c 3 smbd -D
-    while true; do sleep 1000; done
+    ionice -c 3 nmbd -D && ionice -c 3 smbd -FS
+    # while true; do sleep 1000; done
 else
     exit 0
 fi
